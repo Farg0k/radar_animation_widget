@@ -4,7 +4,7 @@
 
 ## 📸 Screenshot
 
-![Radar Animation Widget](assets/screenshot.png)
+![Radar Animation Widget](https://raw.githubusercontent.com/Farg0k/radar_animation_widget/refs/heads/master/assets/screenshot.png)
 
 ## 🔧 Installation
 
