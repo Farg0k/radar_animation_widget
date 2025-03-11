@@ -1,8 +1,8 @@
 name: radar_animation_widget
 description: "radar animation"
 version: 0.0.1
-homepage:
-
+homepage: https://github.com/Farg0k/radar_animation_widget
+repository: https://github.com/Farg0k/radar_animation_widget
 environment:
   sdk: ^3.7.0
   flutter: ">=1.17.0"
