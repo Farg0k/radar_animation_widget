@@ -141,5 +141,5 @@ This package is distributed under the MIT license. See the `LICENSE` file for de
 
 ---
 
-📢 If you have any questions or suggestions – open an issue on [GitHub](https://github.com/your-repository).
+📢 If you have any questions or suggestions – open an issue on [GitHub](https://github.com/Farg0k/radar_animation_widget).
 
