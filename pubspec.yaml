@@ -1,6 +1,6 @@
 name: radar_animation_widget
 description: "radar animation"
-version: 0.0.1
+version: 0.1.0
 homepage: https://github.com/Farg0k/radar_animation_widget
 repository: https://github.com/Farg0k/radar_animation_widget
 environment:

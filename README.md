@@ -64,7 +64,48 @@ class RadarScreen extends StatelessWidget {
 }
 
 ```
+# 📡 RadarController
 
+You can control its animation using `RadarController`.
+
+### 🔹 **Basic Setup**
+Initialize the controller and pass it to the widget:
+```
+final RadarController controller = RadarController();
+
+RadarAnimationWidget(
+  controller: controller,
+  ...
+);
+```
+
+### 🔹 **Checking Animation State**
+Verify if the radar is currently running:
+
+```
+bool isRunning = controller.isAnimating;
+print("Is the radar running? $isRunning");
+```
+
+### 🔹 **Controlling the Radar Animation**
+```
+controller.start();  // Start the radar
+controller.stop();   // Stop the radar
+controller.toggle(); // Toggle animation state
+```
+
+### 🔹 **Managing Radar Points**
+```
+int numberPoints = controller.numberPoints;  // Get the current number of points
+controller.setNumberPoints(numberPoints: numberPoints + 1); // Set the number of points
+
+```
+---
+
+## 🎯 Features
+✅ Start, stop, and toggle radar animation
+✅ Check if the animation is running
+✅ Control the number of radar points
 ## 🎨 Configuration
 
 | Parameter              | Type       | Description                                               | Default Value          |
@@ -92,7 +133,7 @@ class RadarScreen extends StatelessWidget {
 | `lensColor`            | `Color`    | Lens color                                                | `Colors.white24`       |
 | `borderColor`          | `Color`    | Radar border color                                        | `Colors.grey`          |
 | `lensBlur`             | `double`   | Lens blur level                                           | `0.5`                  |
-| `lensGlow`             | `bool`     | Enables lens glow                                         | `false`                |
+| `lensGlow`             | `bool`     | Enables lens glow                                         | `true`                 |
 
 ## 📌 License
 
