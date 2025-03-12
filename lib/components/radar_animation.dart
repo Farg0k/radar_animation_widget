@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 class RadarAnimation extends StatefulWidget {
   const RadarAnimation({
     super.key,
+    this.controller,
     required this.dimension,
     required this.backgroundColor,
     required this.duration,
@@ -24,6 +25,7 @@ class RadarAnimation extends StatefulWidget {
     required this.centerDotRadius,
     required this.centerDotColor,
   });
+  final RadarController? controller;
   final double dimension;
   final Color backgroundColor;
   final Duration duration;
@@ -48,32 +50,41 @@ class RadarAnimation extends StatefulWidget {
 }
 
 class _RadarAnimationState extends State<RadarAnimation> with SingleTickerProviderStateMixin {
-  final ValueNotifier<Offset> offsetEndPoint = ValueNotifier<Offset>(Offset(0, 0));
-  final ValueNotifier<Offset> offsetCenter = ValueNotifier<Offset>(Offset(0, 0));
+  final ValueNotifier<Offset> _offsetEndPoint = ValueNotifier<Offset>(Offset(0, 0));
+  final ValueNotifier<Offset> _offsetCenter = ValueNotifier<Offset>(Offset(0, 0));
   late AnimationController _controller;
-
+  bool _isAnimating = true;
+  late bool _paintSector;
+  late double? _radarLineStrokeWidth;
+  late double? _waveStrokeWidth;
+  late int _numberPoints;
   final Random _random = Random();
   final List<RadarPoint> _points = [];
+
   @override
   void initState() {
+    _paintSector = widget.paintSector;
+    _radarLineStrokeWidth = widget.radarLineStrokeWidth;
+    _waveStrokeWidth = widget.waveStrokeWidth;
+    _numberPoints = widget.numberPoints;
+
     super.initState();
-    _controller =
-        AnimationController(vsync: this, duration: widget.duration)
-          ..addListener(() {
-            _generateRandomPoint();
-            setState(() {});
-          })
-          ..repeat();
+    _controller = AnimationController(vsync: this, duration: widget.duration)..addListener(() {
+      _generateRandomPoint();
+      setState(() {});
+    });
+    widget.controller?._attach(this);
+    if (_isAnimating) _controller.repeat();
   }
 
   void _generateRandomPoint() {
     if (_random.nextDouble() < 0.05) {
-      if (_points.length < widget.numberPoints) {
+      if (_points.length < _numberPoints) {
         _points.add(
           RadarPoint.random(
             lifetime: _random.nextDouble(),
-            offsetEndPoint: offsetEndPoint,
-            offsetCenter: offsetCenter,
+            offsetEndPoint: _offsetEndPoint,
+            offsetCenter: _offsetCenter,
           ),
         );
       }
@@ -92,15 +103,15 @@ class _RadarAnimationState extends State<RadarAnimation> with SingleTickerProvid
             return CustomPaint(
               painter: RadarPainter(
                 sectorColor: widget.sectorColor,
-                paintSector: widget.paintSector,
+                paintSector: _paintSector,
                 gridColor: widget.gridColor,
                 gridStrokeWidth: widget.gridStrokeWidth,
                 gridCircleCount: widget.gridCircleCount,
                 gridCircleLinesCount: widget.gridCircleLinesCount,
-                waveStrokeWidth: widget.waveStrokeWidth,
+                waveStrokeWidth: _waveStrokeWidth,
                 waveColor: widget.waveColor,
                 waveCount: widget.waveCount,
-                radarLineStrokeWidth: widget.radarLineStrokeWidth,
+                radarLineStrokeWidth: _radarLineStrokeWidth,
                 radarLineColor: widget.radarLineColor,
                 centerDotRadius: widget.centerDotRadius,
                 centerDotColor: widget.centerDotColor,
@@ -108,8 +119,8 @@ class _RadarAnimationState extends State<RadarAnimation> with SingleTickerProvid
                 pointColor: widget.pointColor,
                 animationValue: _controller.value,
                 points: _points,
-                offsetEndPoint: offsetEndPoint,
-                offsetCenter: offsetCenter,
+                offsetEndPoint: _offsetEndPoint,
+                offsetCenter: _offsetCenter,
               ),
               size: Size.square(widget.dimension),
             );
@@ -121,10 +132,73 @@ class _RadarAnimationState extends State<RadarAnimation> with SingleTickerProvid
 
   @override
   void dispose() {
+    widget.controller?._detach();
     _controller.dispose();
-    offsetCenter.dispose();
-    offsetEndPoint.dispose();
+    _offsetCenter.dispose();
+    _offsetEndPoint.dispose();
     super.dispose();
+  }
+
+  void _setAnimationState(bool? shouldAnimate) {
+    setState(() {
+      _isAnimating = shouldAnimate ?? !_isAnimating;
+      if (_isAnimating) {
+        _paintSector = widget.paintSector;
+        _radarLineStrokeWidth = widget.radarLineStrokeWidth;
+        _waveStrokeWidth = widget.waveStrokeWidth;
+        _controller.repeat();
+      } else {
+        _controller.stop();
+        _paintSector = false;
+        _radarLineStrokeWidth = null;
+        _waveStrokeWidth = null;
+      }
+    });
+  }
+
+  void _setNumberPoints({required int numberPoints}) {
+    if (numberPoints > 0) {
+      _numberPoints = numberPoints;
+      setState(() {});
+    }
+  }
+}
+
+class RadarController {
+  _RadarAnimationState? _state;
+  bool _isAnimating = false;
+  int _numberPoints = 0;
+  bool get isAnimating => _isAnimating;
+  int get numberPoints => _numberPoints;
+
+  void _attach(_RadarAnimationState state) {
+    _state = state;
+    _isAnimating = state._isAnimating;
+    _numberPoints = state._numberPoints;
+  }
+
+  void _detach() {
+    _state = null;
+  }
+
+  void start() {
+    _state?._setAnimationState(true);
+    _isAnimating = _state?._isAnimating ?? false;
+  }
+
+  void stop() {
+    _state?._setAnimationState(false);
+    _isAnimating = _state?._isAnimating ?? false;
+  }
+
+  void toggle() {
+    _state?._setAnimationState(null);
+    _isAnimating = _state?._isAnimating ?? false;
+  }
+
+  void setNumberPoints({required int numberPoints}) {
+    _state?._setNumberPoints(numberPoints: numberPoints);
+    _numberPoints = _state?._numberPoints ?? 0;
   }
 }
 

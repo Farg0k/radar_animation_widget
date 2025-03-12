@@ -2,10 +2,12 @@ import 'package:flutter/material.dart';
 
 import 'components/lens_container.dart';
 import 'components/radar_animation.dart';
+export 'components/radar_animation.dart';
 
 class RadarAnimationWidget extends StatelessWidget {
   const RadarAnimationWidget({
     super.key,
+    this.controller,
     this.useLens = true,
     this.dimension = 300,
     this.backgroundColor = Colors.black,
@@ -31,6 +33,7 @@ class RadarAnimationWidget extends StatelessWidget {
     this.lensBlur = 0.4,
     this.lensGlow = true,
   });
+  final RadarController? controller;
   final bool useLens;
   final double dimension;
   final Color backgroundColor;
@@ -58,6 +61,7 @@ class RadarAnimationWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     Widget radarAnimation = RadarAnimation(
+      controller: controller,
       dimension: dimension,
       backgroundColor: backgroundColor,
       duration: duration,
@@ -90,4 +94,3 @@ class RadarAnimationWidget extends StatelessWidget {
     );
   }
 }
-
