@@ -68,7 +68,7 @@ class _MyHomePageState extends State<MyHomePage> {
   Color _borderColor = Colors.white70;
   double _lensBlur = 0.4;
   bool _lensGlow = true;
-
+  RadarController controller = RadarController();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -78,6 +78,37 @@ class _MyHomePageState extends State<MyHomePage> {
         centerTitle: true,
         actions: [Switch(value: widget.darkMode.value, onChanged: (value) => widget.darkMode.value = value)],
       ),
+      floatingActionButton: Row(
+        spacing: 5,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          FloatingActionButton(
+            onPressed: () {
+              controller.setNumberPoints(numberPoints: controller.numberPoints + 1);
+              ScaffoldMessenger.of(
+                context,
+              ).showSnackBar(SnackBar(content: Text("numberPoints: ${controller.numberPoints}")));
+            },
+            child: Icon(Icons.plus_one),
+          ),
+          FloatingActionButton(
+            onPressed: () {
+              controller.toggle();
+              setState(() {});
+            },
+            child: controller.isAnimating == true ? Icon(Icons.toggle_off) : Icon(Icons.toggle_on_outlined),
+          ),
+          FloatingActionButton(
+            onPressed: () {
+              controller.setNumberPoints(numberPoints: controller.numberPoints - 1);
+              ScaffoldMessenger.of(
+                context,
+              ).showSnackBar(SnackBar(content: Text("numberPoints: ${controller.numberPoints}")));
+            },
+            child: Icon(Icons.exposure_minus_1),
+          ),
+        ],
+      ),
       body: Padding(
         padding: const EdgeInsets.all(8.0),
         child: Column(
@@ -86,6 +117,7 @@ class _MyHomePageState extends State<MyHomePage> {
           children: <Widget>[
             RadarAnimationWidget(
               key: Key(_duration.inSeconds.toString()),
+              controller: controller,
               useLens: _useLens,
               dimension: _dimension,
               backgroundColor: _backgroundColor,
@@ -335,6 +367,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       setState(() => _lensGlow = val);
                     },
                   ),
+                  SizedBox(height: 60),
                 ],
               ),
             ),
